@@ -1,5 +1,6 @@
 'use strict';
 
+// import module
 const Hapi = require('@hapi/hapi');
 const Inert = require("@hapi/inert");
 const path = require('path');
@@ -9,6 +10,7 @@ const User = require('./model/user');
 
 const init = async () => {
 
+    // setup server
     const server = Hapi.Server({
         host: 'localhost',
         port: 888,
@@ -19,6 +21,7 @@ const init = async () => {
         }
     });
 
+    // setup plugin untnuk server ini
     await server.register([
         {
             plugin : require("hapi-geo-locate"),
@@ -34,6 +37,7 @@ const init = async () => {
         }
     ])
 
+    // konfigurasi server khusus view engine (handlebars)
     server.views({
         engines:{
             hbs: require('handlebars')
@@ -42,6 +46,7 @@ const init = async () => {
         layout: 'default'
     })
 
+    // contoh basic route
     server.route({
         method: 'GET',
         path: '/',
@@ -50,7 +55,10 @@ const init = async () => {
         }
     });
 
+    // define route
     server.route([
+
+        // segmen dinamis (misal: xxx/user/2)
         {
             method: 'GET',
             path: '/users/{user?}',
@@ -62,17 +70,21 @@ const init = async () => {
                 }
             }
         },
+
+        // menerima query parameter di url nya (misal: xxx/product?id=5)
         {
             method: 'GET',
-            path: '/task',
+            path: '/product',
             handler: (request, h) => {
                 if (request.query.name) {
                     return `hello ${request.query.name}`;
                 } else {
-                    return `hello task`;
+                    return `hello product`;
                 }
             }
         },
+
+        // redirect route
         {
             method: 'GET',
             path: '/home',
@@ -80,6 +92,8 @@ const init = async () => {
                 return h.redirect('/');
             }
         }, 
+
+        // handle 404 not found route
         {
             method: 'GET',
             path: '/{any*}',
@@ -87,6 +101,8 @@ const init = async () => {
                 return `oops.. page not found`;
             }
         },
+
+        // tes plugin (contoh di sini location, setup ada di atas)
         {
             method: 'GET',
             path: '/location',
@@ -98,6 +114,8 @@ const init = async () => {
                 }
             }
         },
+
+        // return view
         {
             method: 'GET',
             path: '/welcome',
@@ -105,6 +123,8 @@ const init = async () => {
                 return h.file('welcome.html');
             }    
         },
+
+        // return download file
         {
             method: 'GET',
             path: '/download',
@@ -115,6 +135,8 @@ const init = async () => {
                 });
             }    
         },
+
+        // post method
         {
             method: 'POST',
             path: '/login',
@@ -126,12 +148,15 @@ const init = async () => {
                     return `hello (no name)`;
                 }
             },
+            // tambahan option jika dipanggil dari API
             options: {
                 payload: {
                     multipart: true
                 }
             }  
         },
+
+        // view dinamis handlebars (hbs)
         {
             method: 'GET',
             path: '/dynamic',
@@ -142,6 +167,8 @@ const init = async () => {
                 return h.view('index', data);
             }
         },
+
+        // query ke DB (get)
         {
             method: 'GET',
             path: '/manage-get',
@@ -157,6 +184,8 @@ const init = async () => {
                 return h.view('manage', data);
             }
         },
+
+        // query ke DB (save)
         {
             method: 'POST',
             path: '/manage-save',
@@ -180,11 +209,13 @@ const init = async () => {
 
 
 
+    // start server
     await server.start();
     console.log(`server started on : ${server.info.uri}`);
 
 }
 
+// exception log
 process.on('unhandledRejection', (err) => {
     console.log(err);
     process.exit(1);
