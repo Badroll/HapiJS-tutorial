@@ -203,6 +203,26 @@ const init = async () => {
                     multipart: true
                 }
             }  
+        },
+
+        // query ke DB (update)
+        {
+            method: 'POST',
+            path: '/manage-update',
+            handler: async (request, h) => {
+                //User.createUser(request.payload.name);
+                const update = await Connection.raw2(`
+                    UPDATE user SET USER_NAME = ? WHERE USER_ID = ?
+                `, ["Badroll", 1]);
+                console.log(update);
+
+                return h.redirect('/manage-get');
+            },
+            options: {
+                payload: {
+                    multipart: true
+                }
+            }  
         }
 
     ]);
@@ -222,3 +242,9 @@ process.on('unhandledRejection', (err) => {
 });
 
 init();
+/*
+    - download semua modul dan plugin
+    - run dengan command : nodemon -e hbs,js server.js
+*/
+
+/*Happy with Hapi<3*/
