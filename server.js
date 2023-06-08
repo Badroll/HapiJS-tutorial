@@ -214,7 +214,27 @@ const init = async () => {
                 const update = await Connection.raw2(`
                     UPDATE user SET USER_NAME = ? WHERE USER_ID = ?
                 `, ["Badroll", 1]);
-                console.log(update);
+                console.log(update[1]);
+
+                return h.redirect('/manage-get');
+            },
+            options: {
+                payload: {
+                    multipart: true
+                }
+            }  
+        },
+
+        // query ke DB (delete)
+        {
+            method: 'POST',
+            path: '/manage-delete',
+            handler: async (request, h) => {
+                //User.createUser(request.payload.name);
+                const update = await Connection.raw2(`
+                    DELETE user WHERE USER_ID = ?
+                `, [4]);
+                console.log(update[1]);
 
                 return h.redirect('/manage-get');
             },
@@ -244,6 +264,7 @@ process.on('unhandledRejection', (err) => {
 init();
 /*
     - download semua modul dan plugin
+    - setup database. konfigurasi mysql, import database
     - run dengan command : nodemon -e hbs,js server.js
 */
 
