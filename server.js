@@ -6,6 +6,7 @@ const Inert = require("@hapi/inert");
 const path = require('path');
 const Connection = require('./dbconfig');
 const User = require('./model/user');
+const helper = require('./helper');
 
 
 const init = async () => {
@@ -243,6 +244,27 @@ const init = async () => {
                     multipart: true
                 }
             }  
+        },
+
+        // return JSON
+        {
+            method: 'GET',
+            path: '/return',
+            handler: async (request, h) => {
+                return h.response({
+                    id: 1,
+                    nama : "bdrl"
+                })
+            } 
+        },
+
+        // helper function
+        {
+            method: 'GET',
+            path: '/compose',
+            handler: async (request, h) => {
+                return helper.compose(h, "SUCCESS", `Berhasil`);
+            } 
         }
 
     ]);
